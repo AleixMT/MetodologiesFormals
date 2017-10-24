@@ -12,12 +12,12 @@ typedef struct{
 //elimina element de la llista ll que es troba en la posicio p
 bool eliminaP (t_llista *ll){
     int p = 0, i = 0; //posicio
-    printf("\nQuina posicio vols eliminar? ");
+    printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", (*ll).n);
     scanf("%i", &p);
-    printf("\np = %i\n", p);
+    printf("\nposicio = %i\n", p);
     if((*ll).n!=0){ //si la llista no esta buida
         for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
-            (*ll).elems[p] = (*ll).elems[p+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
+            (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
         }
         (*ll).n=(*ll).n-1;
         return true;

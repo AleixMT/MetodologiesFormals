@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1508853536 source:c:\users\crizl\documents\mp\metodologiesformals\metodologiesformals\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<conio.h>
+
