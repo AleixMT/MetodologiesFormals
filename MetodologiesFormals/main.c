@@ -9,7 +9,16 @@ typedef struct{
     int elems[N_MAX]; //llista
 }t_llista;
 
-//elimina element de la llista ll que es troba en la posicio p
+/**
+* Resum: Elimina l'element de la llista ‘ll’ de la posició ‘p’
+* Precondició: cert
+* Postcondició: ‘ll’ perd l'element de la posició ‘p’ i
+* no es modifica si ‘ll’ és buida o bé ‘p’ no s’ha trobat
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+* - p és del tipus enter
+*/
 bool eliminaP (t_llista *ll, int p){
     int i = 0; //iterador
     if((*ll).n!=0){ //si la llista no esta buida
@@ -22,7 +31,16 @@ bool eliminaP (t_llista *ll, int p){
     else return false; //la llista esta buida
 }
 
-//elimina element de la llista ll que té per valor e
+/**
+* Resum: Elimina el valor de la llista ‘ll’ que té per valor ‘e’
+* Precondició: cert
+* Postcondició: ‘ll’ perd tots els elements que tenen per valor ‘e’ i
+* no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+* - e és del tipus enter
+*/
 bool eliminaV (t_llista *ll, int e){
     int i = 0, p = 0; //iterador i posicio
     if((*ll).n!=0){ //si la llista no esta buida
@@ -40,10 +58,28 @@ bool eliminaV (t_llista *ll, int e){
     else return false; //la llista esta buida
 }
 
+/**
+* Resum: Retorna el número d'elements de la llista ‘ll’
+* Precondició: cert
+* Postcondició: no modifica res
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+*/
 int mida (t_llista ll){
     return ll.n;
 }
 
+/**
+* Resum: Afegeix a la llista ‘ll’ l'element ‘e’
+* Precondició: cert
+* Postcondició: s'afegeix l'element ‘e’ a la llista ‘ll’ i
+* no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+* - e és del tipus enter
+*/
 void insereix(t_llista *ll, int e){
     int j,i=0;
     if((*ll).n!=0){
@@ -58,6 +94,14 @@ void insereix(t_llista *ll, int e){
     (*ll).n++;
 }
 
+/**
+* Resum: Imprimeix per pantalla la llista ‘ll’
+* Precondició: cert
+* Postcondició: no modifica res
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+*/
 void imprimeix(t_llista ll){
     int i;
     printf("\nElements de la llista:\n");
@@ -66,6 +110,14 @@ void imprimeix(t_llista ll){
     }
 }
 
+/**
+* Resum: Omple la llista ‘ll’ amb elements aleatoris.
+* Precondició: cert
+* Postcondició: La llista ‘ll’ és plena
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+*/
 void omplirRandom(t_llista *ll){
     int e,i;
     for(i=0; i<N_MAX; i++){
@@ -74,6 +126,12 @@ void omplirRandom(t_llista *ll){
     }
 }
 
+/**
+* Resum: Menú per a seleccionar la funció desitjada
+* Precondició: cert
+* Postcondició: no es modifica res
+* Errors: no es defineixen
+*/
 int opcio(){
     int c = 0;
     while (1){ //bucle infinit
@@ -85,6 +143,12 @@ int opcio(){
     return (c - 48);
 }
 
+/**
+* Resum: Programa principal per a cridar als diferents mètodes
+* Precondició: cert
+* Postcondició: no es modifica res
+* Errors: no es defineixen
+*/
 int main()
 {
     t_llista ll;
