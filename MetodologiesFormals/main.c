@@ -46,6 +46,10 @@ bool eliminaV (t_llista *ll){
     else return false; //la llista esta buida
 }
 
+int mida (t_llista ll){
+    return ll.n;
+}
+
 void insereix(t_llista *ll, int e){
     int j,i=0;
     if((*ll).n!=0){
@@ -83,6 +87,7 @@ int main()
     omplirRandom(&ll);
     //int e;
     imprimeix(ll);
+    printf("\nmida = %i", mida(ll));
     //fer amb asserts lo de comprovar els errors
    // if (eliminaP(&ll)) printf("s'ha eliminat correctament.");
     //else printf("nope.");
