@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <conio.h>
+#include <assert.h>
 #define N_MAX 10
 
 typedef struct{
@@ -19,16 +20,14 @@ typedef struct{
 * - ll és del tipus t_llista
 * - p és del tipus enter
 */
-bool eliminaP (t_llista *ll, int p){
+void eliminaP (t_llista *ll, int p){
     int i = 0; //iterador
     if((*ll).n!=0){ //si la llista no esta buida
         for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
             (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
         }
         (*ll).n=(*ll).n-1;
-        return true;
     }
-    else return false; //la llista esta buida
 }
 
 /**
@@ -41,7 +40,7 @@ bool eliminaP (t_llista *ll, int p){
 * - ll és del tipus t_llista
 * - e és del tipus enter
 */
-bool eliminaV (t_llista *ll, int e){
+void eliminaV (t_llista *ll, int e){
     int i = 0, p = 0; //iterador i posicio
     if((*ll).n!=0){ //si la llista no esta buida
         for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
@@ -53,9 +52,7 @@ bool eliminaV (t_llista *ll, int e){
             (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
         }
         (*ll).n=(*ll).n-1;
-        return true;
     }
-    else return false; //la llista esta buida
 }
 
 /**
@@ -135,9 +132,9 @@ void omplirRandom(t_llista *ll){
 int opcio(){
     int c = 0;
     while (1){ //bucle infinit
-    printf ("\nQue vols fer?\n1.-Insereix\n2.-Eliminar posicio\n3.-Eliminar valor\n4.-Buida\n5.-Mida\n6.-Suma\n7.-Convertir els valors a positius\n8.-Buscar element a la llista\n9.-Fusionar llistes\n10.-Sortir\t\t->");
+    printf ("\nQue vols fer?\n0.-Sortir\n1.-Insereix\n2.-Eliminar posicio\n3.-Eliminar valor\n4.-Buida\n5.-Mida\n6.-Suma\n7.-Convertir els valors a positius\n8.-Buscar element a la llista\n9.-Fusionar llistes\t\t->");
     c = getche();
-    if (c < 49 || c > 56) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
+    if (c < 48 || c > 56) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
     else break;
     }
     return (c - 48);
@@ -156,25 +153,33 @@ int main()
     int e = 0;
     omplirRandom(&ll);
     imprimeix(ll);
-    //fer amb asserts lo de comprovar els errors
-   // if (eliminaP(&ll)) printf("s'ha eliminat correctament.");
-    //else printf("nope.");
     while (true)
         {
             switch (opcio())
             {
                 case 1: printf("\n\nQuin valor vols inserir?");
                         scanf("%i", &e);
+                        //assert(); mirar si es un int?! el c agafara el codi ascii del caracter en cas de que no ho sigui...
                         insereix(&ll, e);
                         imprimeix(ll);
                         break;
-                case 2: printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", (ll).n);
+                case 2: printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", ll.n);
                         scanf("%i", &e);
+                        assert(e <= ll.n);
                         eliminaP(&ll, e);
                         imprimeix(ll);
                         break;
                 case 3: printf("\nQuin valor vols eliminar?");
                         scanf("%i", &e);
+                        //aixo ja ho comprovo dintre del codi... pero quin altre error pot haver-hi?
+                        int i = 0;
+                        bool trobat = false;
+                        for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
+                            if ((ll).elems[i] == e){
+                                trobat = true; //s'ha trobat el valor
+                            }
+                        }
+                        assert(trobat == true ); //si no troba el valor no deixa seguir
                         eliminaV(&ll, e);
                         imprimeix(ll);
                         break;
@@ -184,7 +189,7 @@ int main()
                 //case 7: positiva(ll);
                 //case 8: hies(ll, e);
                 //case 9: fusiona(ll, ll1, ll2);
-                case 10: return 0;
+                case 0: return 0;
         }
         printf ("\n\n");//intros
         }
