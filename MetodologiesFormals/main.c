@@ -25,6 +25,27 @@ bool eliminaP (t_llista *ll){
     else return false; //la llista esta buida
 }
 
+//elimina element de la llista ll que té per valor e
+bool eliminaV (t_llista *ll){
+    int e = 0, i = 0, p = 0; //valor, iterador i posicio
+    printf("\nQuin valor vols eliminar?");
+    scanf("%i", &e);
+    printf("\nvalor = %i\n", e);
+    if((*ll).n!=0){ //si la llista no esta buida
+        for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
+            if ((*ll).elems[i] == e){
+                p=i; //guardem la posicio on es troba el valor
+            }
+        }
+        for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
+            (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
+        }
+        (*ll).n=(*ll).n-1;
+        return true;
+    }
+    else return false; //la llista esta buida
+}
+
 void insereix(t_llista *ll, int e){
     int j,i=0;
     if((*ll).n!=0){
@@ -62,7 +83,10 @@ int main()
     omplirRandom(&ll);
     //int e;
     imprimeix(ll);
-    if (eliminaP(&ll)) printf("s'ha eliminat correctament.");
+    //fer amb asserts lo de comprovar els errors
+   // if (eliminaP(&ll)) printf("s'ha eliminat correctament.");
+    //else printf("nope.");
+    if (eliminaV(&ll)) printf("s'ha eliminat correctament.");
     else printf("nope.");
     imprimeix(ll);
 
