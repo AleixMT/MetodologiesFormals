@@ -10,11 +10,8 @@ typedef struct{
 }t_llista;
 
 //elimina element de la llista ll que es troba en la posicio p
-bool eliminaP (t_llista *ll){
-    int p = 0, i = 0; //posicio
-    printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", (*ll).n);
-    scanf("%i", &p);
-    printf("\nposicio = %i\n", p);
+bool eliminaP (t_llista *ll, int p){
+    int i = 0; //iterador
     if((*ll).n!=0){ //si la llista no esta buida
         for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
             (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
@@ -26,11 +23,8 @@ bool eliminaP (t_llista *ll){
 }
 
 //elimina element de la llista ll que té per valor e
-bool eliminaV (t_llista *ll){
-    int e = 0, i = 0, p = 0; //valor, iterador i posicio
-    printf("\nQuin valor vols eliminar?");
-    scanf("%i", &e);
-    printf("\nvalor = %i\n", e);
+bool eliminaV (t_llista *ll, int e){
+    int i = 0, p = 0; //iterador i posicio
     if((*ll).n!=0){ //si la llista no esta buida
         for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
             if ((*ll).elems[i] == e){
@@ -80,20 +74,55 @@ void omplirRandom(t_llista *ll){
     }
 }
 
+int opcio(){
+    int c = 0;
+    while (1){ //bucle infinit
+    printf ("\nQue vols fer?\n1.-Insereix\n2.-Eliminar posicio\n3.-Eliminar valor\n4.-Buida\n5.-Mida\n6.-Suma\n7.-Convertir els valors a positius\n8.-Buscar element a la llista\n9.-Fusionar llistes\n10.-Sortir\t\t->");
+    c = getche();
+    if (c < 49 || c > 56) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
+    else break;
+    }
+    return (c - 48);
+}
+
 int main()
 {
     t_llista ll;
     ll.n=0;
+    int e = 0;
     omplirRandom(&ll);
-    //int e;
     imprimeix(ll);
-    printf("\nmida = %i", mida(ll));
     //fer amb asserts lo de comprovar els errors
    // if (eliminaP(&ll)) printf("s'ha eliminat correctament.");
     //else printf("nope.");
-    if (eliminaV(&ll)) printf("s'ha eliminat correctament.");
-    else printf("nope.");
-    imprimeix(ll);
-
+    while (true)
+        {
+            switch (opcio())
+            {
+                case 1: printf("\n\nQuin valor vols inserir?");
+                        scanf("%i", &e);
+                        insereix(&ll, e);
+                        imprimeix(ll);
+                        break;
+                case 2: printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", (ll).n);
+                        scanf("%i", &e);
+                        eliminaP(&ll, e);
+                        imprimeix(ll);
+                        break;
+                case 3: printf("\nQuin valor vols eliminar?");
+                        scanf("%i", &e);
+                        eliminaV(&ll, e);
+                        imprimeix(ll);
+                        break;
+                //case 4: buida(&ll);break;
+                case 5: printf("\nmida = %i", mida(ll));break;
+                //case 6: suma(ll);break;
+                //case 7: positiva(ll);
+                //case 8: hies(ll, e);
+                //case 9: fusiona(ll, ll1, ll2);
+                case 10: return 0;
+        }
+        printf ("\n\n");//intros
+        }
     return 0;
 }
