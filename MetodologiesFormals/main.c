@@ -26,6 +26,16 @@ void insercio(t_llista *ll)
     }
 }
 
+/**
+* Resum: Afegeix a la llista ‘ll’ l'element ‘e’
+* Precondició: cert
+* Postcondició: s'afegeix l'element ‘e’ a la llista ‘ll’ i
+* no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+* - e és del tipus enter
+*/
 bool insereix(t_llista *ll, int e){
     int j,i=0;
     bool inserit=true;
@@ -79,17 +89,17 @@ void eliminaP (t_llista *ll, int p){
 */
 void eliminaV (t_llista *ll, int e){
     int i = 0, p = 0; //iterador i posicio
-    if((*ll).n!=0){ //si la llista no esta buida
-        for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
-            if ((*ll).elems[i] == e){
-                p=i; //guardem la posicio on es troba el valor
-            }
+    bool trobat = false;
+    for (i=0;(i<=N_MAX) && (!trobat);i++){ //fem una cerca del valor
+        if ((*ll).elems[i] == e){
+            p=i; //guardem la posicio on es troba el valor
+            trobat = true;
         }
-        for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
-            (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
-        }
-        (*ll).n=(*ll).n-1;
     }
+    for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
+        (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
+    }
+    (*ll).n=(*ll).n-1;
 }
 
 /**
@@ -104,29 +114,6 @@ int mida (t_llista ll){
     return ll.n;
 }
 
-/**
-* Resum: Afegeix a la llista ‘ll’ l'element ‘e’
-* Precondició: cert
-* Postcondició: s'afegeix l'element ‘e’ a la llista ‘ll’ i
-* no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
-* Errors: no es defineixen
-* Paràmetres:
-* - ll és del tipus t_llista
-* - e és del tipus enter
-*/
-void insereix(t_llista *ll, int e){
-    int j,i=0;
-    if((*ll).n!=0){
-        while(e>(*ll).elems[i] && i<(*ll).n){
-            i++;
-        }
-        for(j=(*ll).n; j>=i; j--){
-            (*ll).elems[j+1]=(*ll).elems[j];
-        }
-    }
-    (*ll).elems[i]=e;
-    (*ll).n++;
-}
 
 /**
 * Resum: Imprimeix per pantalla la llista ‘ll’
@@ -280,6 +267,10 @@ bool fusiona(t_llista ll1, t_llista ll2, t_llista *lld){
     return true;
 }
 
+void buida (t_llista *ll){
+    (*ll).n=0; //posem el punter a la primera posicio, ignorem la resta de valors
+}
+
 /**
 * Resum: Menú per a seleccionar la funció desitjada
 * Precondició: cert
@@ -306,46 +297,18 @@ int opcio(){
 
 int main()
 {
+    int e = 0;
+    bool bolea;
     t_llista ll;
     ll.n=0;
-    bool bolea;
-    int elem;
-
     omplirRandom(&ll);
-    bolea=insereix(&ll, 1); /*Prova per veure si controla l'inserciÃ³ quan la llista ja esta plena*/
-    if(bolea) printf("\nL'element s'ha inserit correctament");
-    else printf("\nLa llista ja estÃ  plena");
     imprimeix(ll);
-    positiva(&ll);
-    imprimeix(ll);
-    printf("\nInsereix l'element a cercar: ");
-    scanf("%d",&elem);
-    bolea=HiEs(ll, elem);
-    if(bolea) printf("\nL'element es troba en la llista");
-    else printf("\nL'element NO es troba en la llista");
-    printf("\n\tSuma dels elements: %d",suma(ll));
-
     t_llista ll1, ll2, lld;
     ll1.n=0;
     ll2.n=0;
     lld.n=0;
     omplirRandomMig(&ll1);
     omplirRandomMig(&ll2);
-    imprimeix(ll1);
-    imprimeix(ll2);
-    bolea=fusiona(ll1, ll2, &lld);
-    if(bolea) printf("\nS'han fusionat bÃ© les llistes");
-    else printf("\nNO s'han pogut fusionar les llistes");
-    imprimeix(lld);
-    positiva(&lld);
-    imprimeix(lld);
-    bolea=fusiona(ll, ll2, &lld);
-    if(bolea) printf("\nS'han fusionat bÃ© les llistes");
-    else printf("\nNO s'han pogut fusionar les llistes");
-
-    int e = 0;
-    omplirRandom(&ll);
-    imprimeix(ll);
     while (true)
         {
             switch (opcio())
@@ -353,7 +316,10 @@ int main()
                 case 1: printf("\n\nQuin valor vols inserir?");
                         scanf("%i", &e);
                         //assert(); mirar si es un int?! el c agafara el codi ascii del caracter en cas de que no ho sigui...
-                        insereix(&ll, e);
+                        //NO CAL QUE SIGUIN BOOLEANS, S'HA DE CONTROLAR AMB ELS ASSERTS, NO AMB BOOLS
+                        bolea=insereix(&ll, e); /*Prova per veure si controla l'inserciÃ³ quan la llista ja esta plena*/
+                        if(bolea) printf("\nL'element s'ha inserit correctament");
+                        else printf("\nLa llista ja estÃ  plena");
                         imprimeix(ll);
                         break;
                 case 2: printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", ll.n);
@@ -364,24 +330,39 @@ int main()
                         break;
                 case 3: printf("\nQuin valor vols eliminar?");
                         scanf("%i", &e);
-                        //aixo ja ho comprovo dintre del codi... pero quin altre error pot haver-hi?
                         int i = 0;
                         bool trobat = false;
-                        for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
-                            if ((ll).elems[i] == e){
-                                trobat = true; //s'ha trobat el valor
+                        if(ll.n!=0){ //si la llista no esta buida
+                            for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
+                                if ((ll).elems[i] == e){
+                                    trobat = true; //s'ha trobat el valor
+                                }
                             }
                         }
                         assert(trobat == true ); //si no troba el valor no deixa seguir
                         eliminaV(&ll, e);
                         imprimeix(ll);
                         break;
-                //case 4: buida(&ll);break;
+                case 4: buida(&ll);break;
                 case 5: printf("\nmida = %i", mida(ll));break;
-                //case 6: suma(ll);break;
-                //case 7: positiva(ll);
-                //case 8: hies(ll, e);
-                //case 9: fusiona(ll, ll1, ll2);
+                case 6: printf("\n\tSuma dels elements: %d",suma(ll));
+                case 7: positiva(&ll);
+                        imprimeix(ll);
+                        break;
+                case 8: printf("\nInsereix l'element a cercar: ");
+                        scanf("%d",&e);
+                        bolea=HiEs(ll, e);
+                        //idem, no cal boolea, s'ha de controlar amb asserts
+                        if(bolea) printf("\nL'element es troba en la llista");
+                        else printf("\nL'element NO es troba en la llista");
+                        break;
+                case 9: bolea=fusiona(ll1, ll2, &lld);
+                        if(bolea) printf("\nS'han fusionat be les llistes");
+                        else printf("\nNO s'han pogut fusionar les llistes");
+                        imprimeix(ll1);
+                        imprimeix(ll2);
+                        imprimeix(lld);
+                        break;
                 case 0: return 0;
         }
         printf ("\n\n");//intros
