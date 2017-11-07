@@ -148,7 +148,7 @@ void eliminaV (t_llista *ll, int e){
                 trobat = true;
             }
         }*/
-    assert (((i = HiEs(*ll, e)) != 0) | activa_asserts); // busquem el valor i si no el trobem abortem
+    assert (((i = HiEs(*ll, e)) != -1) || !activa_asserts); // busquem el valor i si no el trobem abortem
     for (;i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
         (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
     }
@@ -418,6 +418,7 @@ int main()
                 case 2:
                     printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", ll.n);
                     scanf("%s", in);
+
                     assert(((e = atoi(in)) != 0 ) | !activa_asserts); // abortem si no podem fer el casting
                     eliminaP(&ll, e);
                     break;
