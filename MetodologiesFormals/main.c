@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <conio.h>
 #include <assert.h>
+#include <time.h>
 #define N_MAX 10
 
 typedef struct{
@@ -18,8 +19,46 @@ typedef struct{
     int elems[N_MAX]; //llista
 }t_llista;
 
+bool activa_asserts = true; // Interruptor dels asserts: false: sempre desactivats, true: assert activat
+
+
 /**
-* Resum: reordena els elements de la llista ‘ll’
+* Resum: retorna la posicio de l'element "var" dins la llista ‘ll’ si hi és. Sinó, retorna -1
+* Precondició: la llista ll està ordenada
+* Postcondició: cent = (exiteix un alfa : ll.v[alfa] == cent) | -1
+* Errors: no es defineixen
+* Paràmetres:
+* - ll, var
+*/
+int HiEs(t_llista ll, int var){ //Algorisme de cerca dicotòmica per buscar un element
+    int inf=0;
+    int sup=ll.n-1;
+    int cent;
+    bool trobat=false;
+
+    while(inf<=sup && !trobat)
+    {
+        cent=(sup-inf)/2+inf;
+        if(ll.elems[cent]==var)
+        {
+            trobat=true;
+        }
+        else
+        {
+            if(ll.elems[cent]>var)
+            {
+                sup=cent-1;
+            }
+            else inf = cent+1;
+        }
+    }
+    if (!trobat) cent = -1;
+    return cent;
+}
+
+/**
+* Resum: reordena els elements de la llista ‘ll’ utilitzant
+* l'algorisme d'inserció
 * Precondició: cert
 * Postcondició: els elements de la llista estan ordenats
 * Errors: no es defineixen
@@ -44,10 +83,10 @@ void insercio(t_llista *ll)
 
 /**
 * Resum: Afegeix a la llista ‘ll’ l'element ‘e’
-* Precondició: cert
+* Precondició: la llista no està plena
 * Postcondició: s'afegeix l'element ‘e’ a la llista ‘ll’ i
 * no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
-* Errors: no es defineixen
+* Errors: la llista està plena
 * Paràmetres:
 * - ll és del tipus t_llista
 * - e és del tipus enter
@@ -66,48 +105,51 @@ void insereix(t_llista *ll, int e){
         (*ll).elems[i]=e;   //inserim l'element
         (*ll).n++;  //augmentem el nombre d'elements en la llista
     }
+    else assert(false | !activa_asserts); // Si el vector estigués ple llancem error
 }
 
 /**
 * Resum: Elimina l'element de la llista ‘ll’ de la posició ‘p’
-* Precondició: cert
+* Precondició: p >= ll.n
 * Postcondició: ‘ll’ perd l'element de la posició ‘p’ i
 * no es modifica si ‘ll’ és buida o bé ‘p’ no s’ha trobat
-* Errors: no es defineixen
+* Errors: p >= ll.n
 * Paràmetres:
 * - ll és del tipus t_llista
-* - p és del tipus enter
+* - p és del tipus natural
 */
-void eliminaP (t_llista *ll, int p){
+void eliminaP (t_llista *ll, unsigned int p){
     int i = 0; //iterador
-    if((*ll).n!=0){ //si la llista no esta buida
+    if (p < (*ll).n) // si la posicio es menor del nombre d'elements
+    {
         for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
             (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
         }
         (*ll).n=(*ll).n-1;
     }
+    else assert(false | !activa_asserts); //lancem excepció
 }
 
 /**
 * Resum: Elimina el valor de la llista ‘ll’ que té per valor ‘e’
-* Precondició: cert
+* Precondició: existeix un alfa menor que n i major que 0 tal que v[alfa] = e
 * Postcondició: ‘ll’ perd tots els elements que tenen per valor ‘e’ i
 * no es modifica si ‘ll’ és buida o bé ‘e’ no s’ha trobat
-* Errors: no es defineixen
+* Errors: l'element e no existeix dins del vector
 * Paràmetres:
 * - ll és del tipus t_llista
 * - e és del tipus enter
 */
 void eliminaV (t_llista *ll, int e){
-    int i = 0, p = 0; //iterador i posicio
-    bool trobat = false;
-    for (i=0;(i<=N_MAX) && (!trobat);i++){ //fem una cerca del valor
-        if ((*ll).elems[i] == e){
-            p=i; //guardem la posicio on es troba el valor
-            trobat = true;
-        }
-    }
-    for (i=p; i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
+    int i = 0; //iterador i posicio
+    /*    for (i=0;(i<=N_MAX) && (!trobat);i++){ //fem una cerca del valor
+            if ((*ll).elems[i] == e){
+                p=i; //guardem la posicio on es troba el valor
+                trobat = true;
+            }
+        }*/
+    assert (((i = HiEs(*ll, e)) != 0) | activa_asserts); // busquem el valor i si no el trobem abortem
+    for (;i<=N_MAX;i++){ //comencem a desplaçar des de la posicio
         (*ll).elems[i] = (*ll).elems[i+1]; //la posicio a eliminar pasa a ser la següent posicio, i aixi es va desplaçant fins el final
     }
     (*ll).n=(*ll).n-1;
@@ -116,7 +158,7 @@ void eliminaV (t_llista *ll, int e){
 /**
 * Resum: Retorna el número d'elements de la llista ‘ll’
 * Precondició: cert
-* Postcondició: no modifica res
+* Postcondició: cert
 * Errors: no es defineixen
 * Paràmetres:
 * - ll és del tipus t_llista
@@ -129,40 +171,25 @@ int mida (t_llista ll){
 /**
 * Resum: Imprimeix per pantalla la llista ‘ll’
 * Precondició: cert
-* Postcondició: no modifica res
+* Postcondició: cert
 * Errors: no es defineixen
 * Paràmetres:
 * - ll és del tipus t_llista
 */
 
-void imprimeix(t_llista ll){
+void imprimeix(t_llista *ll){
     int i;
+    printf("\nLa llista te %i elements", (*ll).n);
     printf("\nElements de la llista:\n");
-    for(i=0; i<ll.n; i++){  //recorrem i imprimim tots els elements de la llista
-        printf("\t%i",ll.elems[i]);
-    }
-}
-
-/**
-* Resum: Omple la llista ‘ll’ amb elements aleatoris.
-* Precondició: cert
-* Postcondició: La llista ‘ll’ és plena
-* Errors: no es defineixen
-* Paràmetres:
-* - ll és del tipus t_llista
-*/
-void omplirRandom(t_llista *ll){
-    int e,i;
-    for(i=0; i<N_MAX; i++){ //recorrem totes les posicions de la llista
-        e = rand()%(N_MAX*100);
-        insereix(&(*ll), e);    //afegim un valor aleatori
+    for(i=0; i<(*ll).n; i++){  //recorrem i imprimim tots els elements de la llista
+        printf("%i\t",(*ll).elems[i]);
     }
 }
 
 /**
 * Resum: Omple la llista ‘ll’ amb elements aleatoris, fins a la meitat de la seva capacitat.
 * Precondició: cert
-* Postcondició: La llista ‘ll’ és plena
+* Postcondició: La llista ‘ll’ és mig plena i ordenada
 * Errors: no es defineixen
 * Paràmetres:
 * - ll és del tipus t_llista
@@ -176,39 +203,10 @@ void omplirRandomMig(t_llista *ll){
 }
 
 /**
-* Resum: retorna cert si dins la llista ‘ll’ hi ha l’element ‘e’
-* Precondició: fals
-* Postcondició: fals si no el troba, cert si el troba
-* Errors: no es defineixen
-* Paràmetres:
-* - ll, var
-*/
-bool HiEs(t_llista ll, int var){ //Algorisme de cerca dicotòmica per buscar un element
-    int inf=0;
-    int sup=ll.n-1;
-    int cent;
-    bool trobat=false;
-
-    while(inf<=sup && !trobat){
-        cent=(sup-inf)/2+inf;
-        if(ll.elems[cent]==var){
-            trobat=true;
-        }
-        else{
-            if(ll.elems[cent]>var){
-                sup=cent-1;
-            }
-            else inf = cent+1;
-        }
-    }
-    return trobat;
-}
-
-/**
 * Resum: retorna la suma dels elements de la llista ‘ll’
 * Precondició: cert
 * Postcondició: suma de tots els elements de ‘ll’
-* Errors: no es defineixen
+* Errors: si la suma de tots els elements supera MAX_INT el programa pot comportar-se de forma inconsistent
 * Paràmetres:
 * - ll
 */
@@ -224,40 +222,39 @@ int suma(t_llista ll){
 /**
 * Resum: converteix a positius tots els elements de la llista ‘ll’
 * Precondició: cert
-* Postcondició: els elements negatius de ‘ll’ passen a positius i es reordena la llista
-* Errors: no es defineixen
+* Postcondició: per qualsevol alfa tal que alfa mes gran que 0 i menor que n_elem llavors v[alfa] >= 0 & taula ordenada
+* Errors: la llista està buida
 * Paràmetres:
 * - ll
 */
 void positiva(t_llista *ll){
     int i;
-    for(i=0; i<(*ll).n;i++){
-        if((*ll).elems[i]<0){
-            (*ll).elems[i]=(*ll).elems[i]*(-1); //fem el mòdul dels elemts de la lista
+    if ((*ll).n > 0)
+    {
+        for(i=0; i<(*ll).n;i++)
+        {
+            if((*ll).elems[i]<0){
+                (*ll).elems[i]=(*ll).elems[i]*(-1); //fem positius els elements
+            }
         }
-    }
-    //reordenem la llista
+    } else assert (false | activa_asserts); // abortem si la llista està buida
     insercio(&(*ll));
 }
 
 /**
 * Resum: Fusiona dues llistes sobre una llista destí
-* Precondició: cert
-* Postcondició: ‘lld’ conté els elements de les llistes origen, mantenint l’ordre
-* Errors: la suma del nombre d’elements de les dues llistes supera N_MAX
+* Precondició: la suma del nombre d’elements de les dues llistes origen supera N_MAX
+* Postcondició: retorna cert i ‘lld’ conté els elements de les llistes origen, mantenint l’ordre o bé si ll1.n+ll2.n>N_MAX reetorna fals
+* Errors: la suma del nombre d’elements de les dues llistes origen supera N_MAX
 * Paràmetres:
 * - lld, ll1, ll2 són del tipus llista
 */
 bool fusiona(t_llista ll1, t_llista ll2, t_llista *lld){
-    //comprovem si caben els elemnts de les dos llistes en la tercera, sinó acaba la funció
-    if((ll1.n+ll2.n)>N_MAX) return false;
-    int i,j,k;
-    int elem1, elem2;
-    bool fi_ll1;
-    bool fi_ll2;
-    i=0;
-    j=0;
-    k=0;
+    //comprovem si caben els elemnts de les dos llistes en la tercera, sinó abortem
+    assert (((ll1.n+ll2.n)<=N_MAX) | activa_asserts);
+
+    int i = 0,j = 0,k = 0, elem1, elem2;
+    bool fi_ll1, fi_ll2;
 
     //comprovem si alguna de les llistes esta buida
     if(ll1.n>0){
@@ -326,10 +323,50 @@ bool fusiona(t_llista ll1, t_llista ll2, t_llista *lld){
 * Postcondició: numero d'elements de la llista es 0
 * Errors: no es defineixen
 * Paràmetres:
-* - ll
+* - ll es la llista t
 */
 void buida (t_llista *ll){
     (*ll).n=0; //posem el punter a la primera posicio, ignorem la resta de valors
+}
+
+/**
+* Resum: Omple la llista ‘ll’ amb elements aleatoris.
+* Precondició: cert
+* Postcondició: La llista ‘ll’ és plena i ordenada
+* Errors: no es defineixen
+* Paràmetres:
+* - ll és del tipus t_llista
+*/
+void omplirRandom(t_llista *ll){
+    int i;
+    buida(ll);
+    for(i=0; i<N_MAX; i++){ //recorrem totes les posicions de la llista
+        insereix(&(*ll), rand()%(N_MAX*100));    //afegim un valor aleatori
+    }
+}
+
+/**
+* Resum: Retorna l'element mínim de la llista
+* Precondició: cert
+* Postcondició: l'element retornat es el primer de la llista
+* Errors: no es defineixen
+* Paràmetres:
+* - ll es la llista t
+*/
+int min(t_llista t){
+    return t.elems[0];
+}
+
+/**
+* Resum: Retorna l'element màxim de la llista
+* Precondició: cert
+* Postcondició: l'element retornat es l'últim de la llista
+* Errors: no es defineixen
+* Paràmetres:
+* - ll es la llista t
+*/
+int max(t_llista t){
+    return t.elems[t.n-1];
 }
 
 /**
@@ -341,7 +378,7 @@ void buida (t_llista *ll){
 int opcio(){
     int c = 0;
     while (1){ //bucle infinit
-    printf ("\nQue vols fer?\n0.-Sortir\n1.-Insereix\n2.-Eliminar posicio\n3.-Eliminar valor\n4.-Buida\n5.-Mida\n6.-Suma\n7.-Convertir els valors a positius\n8.-Buscar element a la llista\n9.-Fusionar llistes\t\t->");
+    printf ("\nQue vols fer?\n0.-Jocs de proves\n1.-Insereix un valor\n2.-Eliminar una posicio\n3.-Eliminar un valor\n4.-Buida la llista\n5.-Genera aleatoris en tota la llista\n6.-Suma de tots els elements\n7.-Valor absolut de tots els elements\n8.-Cerca element a la llista\n9.-Fusionar llistes\n10.-Reordenar llist\t\t->");
     c = getche();
     if (c < 48 || c > 57) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
     else break;
@@ -358,70 +395,110 @@ int opcio(){
 
 int main()
 {
+    srand(time(NULL)); //inicialització de la llavor
+
+    t_llista ll, ll1, ll2, lld;
+    ll1.n=0; ll2.n=0; lld.n=0; ll.n=0;
+    char in[20];        // buffer de caracters
     int e = 0;
-    bool bolea;
-    t_llista ll;
-    ll.n=0;
+
     omplirRandom(&ll);
-    imprimeix(ll);
-    t_llista ll1, ll2, lld;
-    ll1.n=0;
-    ll2.n=0;
-    lld.n=0;
-    omplirRandomMig(&ll1);
-    omplirRandomMig(&ll2);
+
     while (true)
         {
+            imprimeix(&ll);
             switch (opcio())
             {
-                case 1: printf("\n\nQuin valor vols inserir?");
-                        scanf("%i", &e);
-                        assert(ll.n<N_MAX); //assert si la llista està plena
-                        insereix(&ll, e);
-                        imprimeix(ll);
-                        break;
-                case 2: printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", ll.n);
-                        scanf("%i", &e);
-                        assert(e <= ll.n); //assert si es major del nombre d'elements
-                        eliminaP(&ll, e);
-                        imprimeix(ll);
-                        break;
-                case 3: printf("\nQuin valor vols eliminar?");
-                        scanf("%i", &e);
-                        int i = 0;
-                        bool trobat = false;
-                        if(ll.n!=0){ //si la llista no esta buida
-                            for (i=0;i<=N_MAX;i++){ //fem una cerca del valor
-                                if ((ll).elems[i] == e){
-                                    trobat = true; //s'ha trobat el valor
-                                }
-                            }
-                        }
-                        assert(trobat == true ); //si no troba el valor no deixa seguir
-                        eliminaV(&ll, e);
-                        imprimeix(ll);
-                        break;
-                case 4: buida(&ll);break; //assert a si la llista ja es buida? ja te el treball fet, pa que mas?
-                case 5: assert(ll.n>0);
-                        printf("\nmida = %i", mida(ll));break; //assert si esta buida? la mida sera 0, ja es correcte
-                case 6: assert(ll.n>0);
-                        printf("\n\tSuma dels elements: %d",suma(ll)); //si esta buida no podem sumar els elements, pero igual, la suma seria 0?
-                case 7: assert(ll.n>0); //assert si esta buida
-                        positiva(&ll);
-                        imprimeix(ll);
-                        break;
-                case 8: printf("\nInsereix l'element a cercar: ");
-                        scanf("%d",&e);
-                        bolea=HiEs(ll, e); //quin assert podriem posar aqui?
-                        if(bolea) printf("\nL'element es troba en la llista");
-                        else printf("\nL'element NO es troba en la llista");
-                        break;
-                case 9: assert(fusiona(ll1, ll2, &lld));
-                        imprimeix(ll1);
-                        imprimeix(ll2);
-                        imprimeix(lld);
-                        break;
-                case 0: return 0;
+                case 0:
+                    omplirRandom(&ll);
+                    omplirRandom(&ll1);
+                    omplirRandom(&ll2); // omplim random
+                    getch();
+                    imprimeix(&ll);
+                    imprimeix(&ll1);
+                    imprimeix(&ll2);
+                    getch();
+                    /*
+                    for (i=0; i<ll1.n; i++)
+                    {
+                        eliminaV(&ll1, min(ll1));    // provem funcio eliminaV per a tots els valors
+                    }
+                    for (i=0; i<ll2.n; i++)
+                    {
+                        eliminaP(&ll2, i);     // provem funcio eliminaP per a totes les posicions
+                    }
+                    imprimeix(ll);
+                    imprimeix(ll1);
+                    imprimeix(ll2);
+                    fusiona(ll, ll1, &ll2); // fusionem les llistes. en aquest cas ll2 = ll
+                    imprimeix(ll);
+                    imprimeix(ll2); // comprovem
+                    omplirRandomMig(&ll2);    // omplim ll2 amb negatius
+                    omplirRandomMig(&ll1);    // omplim ll1 amb negatius
+                    imprimeix(ll1);
+                    imprimeix(ll2); // comprovem
+                    buida(&ll);  // buidem ll
+                    fusiona(ll1, ll2, &ll); // fusionem les llistes
+                    imprimeix(ll); // comprovem
+                    printf ("%i", suma(ll));   // mostrem la suma de ll
+                    positiva(&ll);
+                    imprimeix(ll); // comprovem
+                    printf ("%i", suma(ll));   // mostrem la suma de ll
+                    buida(&ll); // buida la llista
+                    for (i=0; i<N_MAX; i++)
+                    {
+                        insereix(&ll, rand()-rand()); //afegim N_MAX valors de diferents signes
+                    }
+                    positiva(&ll);
+                    imprimeix(ll); // comprovem
+                    */
+                    break;
+
+                case 1:
+                    printf("\n\nQuin valor vols inserir?");
+                    scanf("%s", in);
+                    assert(((e = atoi(in)) != 0) | !activa_asserts); // abortem si no podem fer el casting
+                    insereix(&ll, e);
+                    break;
+                case 2:
+                    printf("\nQuina posicio vols eliminar? (Vector amb %i elements) ", ll.n);
+                    scanf("%s", in);
+                    assert(((e = atoi(in)) != 0 ) | !activa_asserts); // abortem si no podem fer el casting
+                    eliminaP(&ll, e);
+                    break;
+                case 3:
+                    printf("\nQuin valor vols eliminar?");
+                    scanf("%s", in);
+                    assert(((e = atoi(in)) != 0 ) | !activa_asserts); // abortem si no podem fer el casting
+                    eliminaV(&ll, e);
+                    break;
+                case 4:
+                    buida(&ll);
+                    break;
+                case 5:
+                    omplirRandom(&ll);
+                    break;
+                case 6:
+                    printf("\n\tSuma dels elements: %d",suma(ll));
+                    break;
+                case 7:
+                    positiva(&ll);
+                    break;
+                case 8:
+                    printf("\nInsereix l'element a cercar: ");
+                    scanf("%s", in);
+                    assert(((e = atoi(in)) != 0 ) | !activa_asserts); // abortem si no podem fer el casting
+                    if((e = HiEs(ll, e)) != -1) printf("\nL'element es troba en la llista en la posicio %i", e);
+                    else printf("\nL'element NO es troba en la llista");
+                    break;
+                case 9:
+                    omplirRandomMig(&ll1);
+                    omplirRandomMig(&ll2);
+                    imprimeix(&ll1);
+                    imprimeix(&ll2);
+                    fusiona(ll1, ll2, &lld);
+                    imprimeix(&lld);
+                    break;
         }
         printf ("\n\n");//intros
        }
