@@ -413,12 +413,12 @@ int main()
                     omplirRandom(&ll);
                     omplirRandom(&ll1);
                     omplirRandom(&ll2); // omplim random
-                    getch();
+                    /*
                     imprimeix(&ll);
                     imprimeix(&ll1);
                     imprimeix(&ll2);
                     getch();
-                    /*
+
                     for (i=0; i<ll1.n; i++)
                     {
                         eliminaV(&ll1, min(ll1));    // provem funcio eliminaV per a tots els valors
