@@ -177,12 +177,12 @@ int mida (t_llista ll){
 * - ll és del tipus t_llista
 */
 
-void imprimeix(t_llista *ll){
+void imprimeix(t_llista ll){
     int i;
-    printf("\nLa llista te %i elements", (*ll).n);
+    printf("\nLa llista te %d elements", ll.n);
     printf("\nElements de la llista:\n");
-    for(i=0; i<(*ll).n; i++){  //recorrem i imprimim tots els elements de la llista
-        printf("%i\t",(*ll).elems[i]);
+    for(i=0; i<ll.n; i++){  //recorrem i imprimim tots els elements de la llista
+        printf("%i\t",ll.elems[i]);
     }
 }
 
@@ -339,7 +339,7 @@ void buida (t_llista *ll){
 */
 void omplirRandom(t_llista *ll){
     int i;
-    buida(ll);
+    buida(&(*ll));
     for(i=0; i<N_MAX; i++){ //recorrem totes les posicions de la llista
         insereix(&(*ll), rand()%(N_MAX*100));    //afegim un valor aleatori
     }
@@ -378,9 +378,9 @@ int max(t_llista t){
 int opcio(){
     int c = 0;
     while (1){ //bucle infinit
-    printf ("\nQue vols fer?\n0.-Jocs de proves\n1.-Insereix un valor\n2.-Eliminar una posicio\n3.-Eliminar un valor\n4.-Buida la llista\n5.-Genera aleatoris en tota la llista\n6.-Suma de tots els elements\n7.-Valor absolut de tots els elements\n8.-Cerca element a la llista\n9.-Fusionar llistes\n10.-Reordenar llist\t\t->");
+    printf ("\nQue vols fer?\n1.-Insereix un valor\n2.-Eliminar una posicio\n3.-Eliminar un valor\n4.-Buida la llista\n5.-Genera aleatoris en tota la llista\n6.-Suma de tots els elements\n7.-Valor absolut de tots els elements\n8.-Cerca element a la llista\n9.-Fusionar llistes\n10.-Reordenar llist\t\t->");
     c = getche();
-    if (c < 48 || c > 57) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
+    if (c < 49 || c > 57) printf ("\n\nOpcio incorrecta, torna-ho a intentar...");
     else break;
     }
     return (c - 48);
@@ -406,54 +406,9 @@ int main()
 
     while (true)
         {
-            imprimeix(&ll);
+            imprimeix(ll);
             switch (opcio())
             {
-                case 0:
-                    omplirRandom(&ll);
-                    omplirRandom(&ll1);
-                    omplirRandom(&ll2); // omplim random
-                    /*
-                    imprimeix(&ll);
-                    imprimeix(&ll1);
-                    imprimeix(&ll2);
-                    getch();
-
-                    for (i=0; i<ll1.n; i++)
-                    {
-                        eliminaV(&ll1, min(ll1));    // provem funcio eliminaV per a tots els valors
-                    }
-                    for (i=0; i<ll2.n; i++)
-                    {
-                        eliminaP(&ll2, i);     // provem funcio eliminaP per a totes les posicions
-                    }
-                    imprimeix(ll);
-                    imprimeix(ll1);
-                    imprimeix(ll2);
-                    fusiona(ll, ll1, &ll2); // fusionem les llistes. en aquest cas ll2 = ll
-                    imprimeix(ll);
-                    imprimeix(ll2); // comprovem
-                    omplirRandomMig(&ll2);    // omplim ll2 amb negatius
-                    omplirRandomMig(&ll1);    // omplim ll1 amb negatius
-                    imprimeix(ll1);
-                    imprimeix(ll2); // comprovem
-                    buida(&ll);  // buidem ll
-                    fusiona(ll1, ll2, &ll); // fusionem les llistes
-                    imprimeix(ll); // comprovem
-                    printf ("%i", suma(ll));   // mostrem la suma de ll
-                    positiva(&ll);
-                    imprimeix(ll); // comprovem
-                    printf ("%i", suma(ll));   // mostrem la suma de ll
-                    buida(&ll); // buida la llista
-                    for (i=0; i<N_MAX; i++)
-                    {
-                        insereix(&ll, rand()-rand()); //afegim N_MAX valors de diferents signes
-                    }
-                    positiva(&ll);
-                    imprimeix(ll); // comprovem
-                    */
-                    break;
-
                 case 1:
                     printf("\n\nQuin valor vols inserir?");
                     scanf("%s", in);
@@ -494,10 +449,10 @@ int main()
                 case 9:
                     omplirRandomMig(&ll1);
                     omplirRandomMig(&ll2);
-                    imprimeix(&ll1);
-                    imprimeix(&ll2);
+                    imprimeix(ll1);
+                    imprimeix(ll2);
                     fusiona(ll1, ll2, &lld);
-                    imprimeix(&lld);
+                    imprimeix(lld);
                     break;
         }
         printf ("\n\n");//intros
